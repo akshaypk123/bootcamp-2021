@@ -12,7 +12,7 @@ class Homepage extends StatelessWidget {
          crossAxisAlignment: CrossAxisAlignment.center,
         children:[
           Text('data'),
-          Text('data'),
+          Text('data 1'),
         ],
        )));
   }

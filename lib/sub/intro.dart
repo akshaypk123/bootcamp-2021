@@ -1,12 +1,46 @@
+
+
+import 'package:akshay/model/photos_model.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../topbar.dart';
 
-class Homepage extends StatelessWidget {
-
+class Homepage extends StatefulWidget {
   @override
+  _HomepageState createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  List<PhotosModel> _photosData =[];
+
+  Future<void> _fetchphotos() async{
+
+    final _dioInstance = Dio(); 
+    _dioInstance.options.headers["Authorization"] = "Client-ID 168KPXQhJviFtqX7AmV0gGA28IJ62BrzbxFrVAnqJJE";
+    
+    final _fetchData = await _dioInstance.get('https://api.unsplash.com/photos');
+    for (var _items in _fetchData.data) {
+      setState(() {
+        _photosData.add(PhotosModel(id: _items['id'], imgURL: _items['urls']['regular']));
+      });
+      
+    }
+    //_fetchData.data;
+    print(_fetchData);
+    
+  }
+
+@override
+  void initState() {
+    _fetchphotos();
+    super.initState();
+  }
+  @override
+  
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: SafeArea(
         
@@ -24,7 +58,7 @@ class Homepage extends StatelessWidget {
               const SizedBox(height: 10),
               GridView.builder(
                 padding: EdgeInsets.all(10),
-                itemCount: 4,
+                itemCount: _photosData.length,
                 shrinkWrap: true,
 
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -33,7 +67,7 @@ class Homepage extends StatelessWidget {
                   crossAxisCount: 2), 
                itemBuilder: (ctx,index) => Container(
                  padding: EdgeInsets.all(10),
-                 child: Image.network('https://images.unsplash.com/photo-1622976383598-63a52ddd77be?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80', fit: BoxFit.cover,),
+                 child: Image.network( _photosData[index].imgURL, fit: BoxFit.cover,),
                ),
                )
             ],

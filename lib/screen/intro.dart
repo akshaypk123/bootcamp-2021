@@ -1,11 +1,13 @@
 
 
 import 'package:akshay/model/photos_model.dart';
+import 'package:akshay/screen/profile_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import '../topbar.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'topbar.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -48,10 +50,13 @@ class _HomepageState extends State<Homepage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TopBar(
-                title: 'Akshay P K',
-                subtitle: 'Developer',
-                color: Color(0xff087118),
+              ValueListenableBuilder(
+                valueListenable: Hive.box('profile').listenable(),                
+                builder: (BuildContext context,Box value, Widget? child) => TopBar(
+                  title: value.get('name'),
+                  subtitle: 'Developer',
+                  color: Color(0xff087118),
+                ),
               ),
               const SizedBox(height: 10),
               Text('Photography',style: TextStyle(fontSize: 22 ,color: Colors.green),),
@@ -73,7 +78,12 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
         ),
-      ),    
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.of(context).pushNamed(ProfileScreen.routename);
+        },
+        child: Icon(Icons.edit),),    
     );
   }
 }
